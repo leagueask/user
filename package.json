@@ -1,0 +1,19 @@
+{
+  "name": "user",
+  "version": "1.0.0",
+  "description": "User microservice of LeagueAsk",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leagueask/user.git"
+  },
+  "author": "Christopher Schneider, Leonardo Silva",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/leagueask/user/issues"
+  },
+  "homepage": "https://github.com/leagueask/user#readme"
+}
