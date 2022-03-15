@@ -1,4 +1,5 @@
 import { RegistrationError } from '@/domain/errors'
+import { UserAccount } from '../models'
 
 export interface UserRegistration {
   peform: (params: UserRegistration.Params) => Promise<UserRegistration.Result>
@@ -11,5 +12,5 @@ export namespace UserRegistration {
     password: string
   }
 
-  export type Result = RegistrationError
+  export type Result = RegistrationError | UserAccount
 }

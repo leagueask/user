@@ -8,9 +8,10 @@ export class UserRegistrationService implements UserRegistration {
   ) {}
 
   async peform (params: UserRegistration.Params): Promise<UserRegistration.Result> {
-    const userAccount = await this.userApi.load({ email: params.email })
-    if (userAccount === undefined) {
-      await this.userApi.register(params)
+    const userLoaded = await this.userApi.load({ email: params.email })
+    if (userLoaded === undefined) {
+      const userAccount = await this.userApi.register(params)
+      return userAccount
     }
     return new RegistrationError()
   }

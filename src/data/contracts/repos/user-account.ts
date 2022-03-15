@@ -1,5 +1,7 @@
+import { UserAccount } from '@/domain/models'
+
 export interface RegisterUserRepository {
-  register: (params: RegisterUserRepository.Params) => Promise<void>
+  register: (params: RegisterUserRepository.Params) => Promise<RegisterUserRepository.Result>
 }
 
 namespace RegisterUserRepository {
@@ -8,6 +10,8 @@ namespace RegisterUserRepository {
     email: string
     password: string
   }
+
+  export type Result = UserAccount
 }
 
 export interface LoadUserAccountRepository {
