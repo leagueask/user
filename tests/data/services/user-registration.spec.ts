@@ -1,5 +1,6 @@
 import { UserRegistrationService } from '@/data/services'
 import { LoadUserAccountRepository, RegisterUserRepository } from '@/data/contracts/repos'
+import { RegistrationError } from '@/domain/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -25,5 +26,12 @@ describe('UserRegistrationService', () => {
 
     expect(userRepo.register).toHaveBeenCalled()
     expect(userRepo.register).toBeCalledTimes(1)
+  })
+
+  it('should return RegistrationError when LoadUserAccountRepository found the same email passed', async () => {
+    userRepo.load.mockResolvedValueOnce({ name: 'any_name', email: 'any_email' })
+    const registrationResult = await sut.peform({ name: 'any_name', email: 'any_email', password: 'any_password' })
+
+    expect(registrationResult).toEqual(new RegistrationError())
   })
 })

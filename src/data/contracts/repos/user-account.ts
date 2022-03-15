@@ -11,11 +11,16 @@ namespace RegisterUserRepository {
 }
 
 export interface LoadUserAccountRepository {
-  load: (params: LoadUserAccountRepository.Params) => Promise<void>
+  load: (params: LoadUserAccountRepository.Params) => Promise<LoadUserAccountRepository.Result>
 }
 
 namespace LoadUserAccountRepository {
   export type Params = {
+    email: string
+  }
+
+  export type Result = undefined | {
+    name: string
     email: string
   }
 }
