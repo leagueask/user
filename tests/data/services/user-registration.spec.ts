@@ -1,7 +1,9 @@
 import { UserRegistrationService } from '@/data/services'
 import { UserRegistration } from '@/domain/features'
-import { LoadUserAccountRepository, RegisterUserRepository } from '@/data/contracts/repos'
+import { AccessToken } from '@/domain/models'
 import { RegistrationError } from '@/domain/errors'
+import { LoadUserAccountRepository, RegisterUserRepository } from '@/data/contracts/repos'
+import { TokenGenerator } from '@/data/contracts/crypto'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -9,17 +11,20 @@ describe('UserRegistrationService', () => {
   let sut: UserRegistrationService
   let userRepo: MockProxy<LoadUserAccountRepository & RegisterUserRepository>
   let userData: UserRegistration.Params
+  let crypto: MockProxy<TokenGenerator>
 
   beforeAll(() => {
     userData = {
       name: 'any_name', email: 'any_email', password: 'any_password'
     }
     userRepo = mock()
-    userRepo.load.mockResolvedValueOnce(undefined)
+    userRepo.load.mockResolvedValue(undefined)
+    userRepo.register.mockResolvedValue({ id: 'any_id', name: 'any_name', email: 'any_email' })
+    crypto = mock()
   })
 
   beforeEach(() => {
-    sut = new UserRegistrationService(userRepo)
+    sut = new UserRegistrationService(userRepo, crypto)
   })
 
   it('LoadUserAccountRepository should be called with correct params', async () => {
@@ -44,11 +49,10 @@ describe('UserRegistrationService', () => {
     expect(registrationResult).toEqual(new RegistrationError())
   })
 
-  it('should return UserAccount when RegisterUserRepository succefully register a user', async () => {
-    userRepo.register.mockResolvedValueOnce({ id: 'any_id', name: 'any_name', email: 'any_email' })
+  it('should call TokenGenerator with correct params', async () => {
+    await sut.peform(userData)
 
-    const registrationResult = await sut.peform(userData)
-
-    expect(registrationResult).toEqual({ id: 'any_id', name: 'any_name', email: 'any_email' })
+    expect(crypto.generateToken).toBeCalledWith({ key: 'any_id', expirationInMs: AccessToken.expirationInMs })
+    expect(crypto.generateToken).toBeCalledTimes(1)
   })
 })
