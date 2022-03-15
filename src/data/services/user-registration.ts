@@ -10,11 +10,12 @@ export class UserRegistrationService implements UserRegistration {
     private readonly crypto: TokenGenerator
   ) {}
 
-  async peform (params: UserRegistration.Params): Promise<UserRegistration.Result> {
+  async perform (params: UserRegistration.Params): Promise<UserRegistration.Result> {
     const userLoaded = await this.userApi.load({ email: params.email })
     if (userLoaded === undefined) {
       const userAccount = await this.userApi.register(params)
-      await this.crypto.generateToken({ key: userAccount.id, expirationInMs: AccessToken.expirationInMs })
+      const token = await this.crypto.generateToken({ key: userAccount.id, expirationInMs: AccessToken.expirationInMs })
+      return new AccessToken(token)
     }
     return new RegistrationError()
   }

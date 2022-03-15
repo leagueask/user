@@ -1,8 +1,8 @@
 import { RegistrationError } from '@/domain/errors'
-import { UserAccount } from '../models'
+import { AccessToken } from '@/domain/models'
 
 export interface UserRegistration {
-  peform: (params: UserRegistration.Params) => Promise<UserRegistration.Result>
+  perform: (params: UserRegistration.Params) => Promise<UserRegistration.Result>
 }
 
 export namespace UserRegistration {
@@ -12,5 +12,5 @@ export namespace UserRegistration {
     password: string
   }
 
-  export type Result = RegistrationError | UserAccount
+  export type Result = RegistrationError | AccessToken
 }
