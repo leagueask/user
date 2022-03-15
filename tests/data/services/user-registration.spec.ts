@@ -1,16 +1,29 @@
 import { UserRegistrationService } from '@/data/services'
-import { UserApi } from '@/data/contracts/apis'
+import { LoadUserAccountRepository, RegisterUserRepository } from '@/data/contracts/repos'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('UserRegistrationService', () => {
-  it('UserApi should be called with correct params', async () => {
-    const userApi: MockProxy<UserApi> = mock<UserApi>()
-    const sut = new UserRegistrationService(userApi)
-
+  let sut: UserRegistrationService
+  let userRepo: MockProxy<LoadUserAccountRepository & RegisterUserRepository>
+  beforeAll(() => {
+    userRepo = mock()
+  })
+  beforeEach(() => {
+    sut = new UserRegistrationService(userRepo)
+  })
+  it('LoadUserAccountRepository should be called with correct params', async () => {
     await sut.peform({ name: 'any_name', email: 'any_email', password: 'any_password' })
 
-    expect(userApi.register).toHaveBeenCalledWith({ name: 'any_name', email: 'any_email', password: 'any_password' })
-    expect(userApi.register).toBeCalledTimes(1)
+    expect(userRepo.load).toHaveBeenCalledWith({ email: 'any_email' })
+    expect(userRepo.load).toBeCalledTimes(1)
+  })
+
+  it('should call RegisterUserRepository when LoadUserAccountRepository did not found the same email passed', async () => {
+    userRepo.load.mockResolvedValueOnce(undefined)
+    await sut.peform({ name: 'any_name', email: 'any_email', password: 'any_password' })
+
+    expect(userRepo.register).toHaveBeenCalled()
+    expect(userRepo.register).toBeCalledTimes(1)
   })
 })

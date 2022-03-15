@@ -1,12 +1,15 @@
 import { UserRegistration } from '@/domain/features'
-import { UserApi } from '@/data/contracts/apis'
+import { LoadUserAccountRepository, RegisterUserRepository } from '@/data/contracts/repos'
 
 export class UserRegistrationService implements UserRegistration {
   constructor (
-    private readonly userApi: UserApi
+    private readonly userApi: LoadUserAccountRepository & RegisterUserRepository
   ) {}
 
   async peform (params: UserRegistration.Params): Promise<void> {
-    await this.userApi.register(params)
+    const userAccount = await this.userApi.load({ email: params.email })
+    if (userAccount === undefined) {
+      await this.userApi.register(params)
+    }
   }
 }
